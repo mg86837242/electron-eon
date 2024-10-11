@@ -11,9 +11,9 @@ export default function useClientSideTokenValidation() {
   // Validate the token persisted on the client-side
   React.useEffect(() => {
     if (!token) {
-      // If there's no persisted token, then the user is a guest, and there's no
-      // need to redirect the guest user, b/c they'd be visiting a public route,
-      // a protected route (403/404) or a non-existent route (404)
+      // If there's no persisted token, then the user is a guest, so
+      // there's no need to redirect the guest user, b/c they would be
+      // on a public route, a 404 page or even a 403 page
       return;
     }
 
@@ -27,5 +27,3 @@ export default function useClientSideTokenValidation() {
     }
   }, [token, updateToken]);
 }
-
-// TODO there's currently no code implementation to immediately log out the user when the user tampers with, esp. deletes, token persisted in `localStorage`
