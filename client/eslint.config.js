@@ -1,9 +1,10 @@
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
+import pluginQuery from '@tanstack/eslint-plugin-query';
 import eslintConfigPrettier from 'eslint-config-prettier';
+import reactRefresh from 'eslint-plugin-react-refresh';
 import reactJsxRuntime from 'eslint-plugin-react/configs/jsx-runtime.js';
 import reactRecommended from 'eslint-plugin-react/configs/recommended.js';
-import reactRefresh from 'eslint-plugin-react-refresh';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import globals from 'globals';
 import path from 'path';
@@ -25,10 +26,10 @@ export default [
   // https://github.com/jsx-eslint/eslint-plugin-react?tab=readme-ov-file#configuring-shared-settings
   reactRecommended,
   reactJsxRuntime,
+  ...pluginQuery.configs['flat/recommended'],
   // https://eslint.org/docs/latest/use/configure/migration-guide#using-eslintrc-configs-in-flat-config
   // mimic ESLintRC-style extends
   ...compat.extends('plugin:react-hooks/recommended'),
-  ...compat.extends('plugin:@tanstack/eslint-plugin-query/recommended'),
   // "make sure to put it (`eslint-config-prettier`) last": https://github.com/prettier/eslint-config-prettier?tab=readme-ov-file#installation
   eslintConfigPrettier,
   // https://eslint.org/docs/latest/use/configure/configuration-files#globally-ignoring-files-with-ignores
