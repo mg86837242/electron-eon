@@ -12,14 +12,10 @@
 
    - `./rds.tf`
 
-3. Run the following bash script (or equivalent), then update the following values in `terraform.tfvars`:
+3. Run the following bash script (or equivalent): `cp terraform.tfvars.example terraform.tfvars`, then update the following values in `terraform.tfvars`:
 
-   - Update the `vpc_id` to the ID of the VPC created by AWS Copilot CLI
-   - Update the `vpc_private_subnets` to the list of IDs of private subnets inside the VPC that is created by AWS Copilot CLI
-   - Update the `rds_db_password` to [the desired password for the master DB user](https://github.com/terraform-aws-modules/terraform-aws-rds?tab=readme-ov-file#input_password):
-
-```bash
-cp terraform.tfvars.example terraform.tfvars
-```
+   - Change the `vpc_id` value to the ID of the VPC created by AWS Copilot CLI
+   - Change the `vpc_private_subnets` value to the list of IDs of private subnets inside the VPC that is created by AWS Copilot CLI
+   - Change the `rds_db_password` value to [the desired password for the master DB user](https://github.com/terraform-aws-modules/terraform-aws-rds?tab=readme-ov-file#input_password)
 
 4. Run `terraform init`, `terraform validate`, `terraform plan`, and `terraform apply` in sequence to provision the resources to complement the infrastructure created by AWS Copilot CLI.
