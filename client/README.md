@@ -1,35 +1,36 @@
-# Electron Eon test
+# Electron Eon
 
 ## 1.0 Project Description
 
-"Electron Eon" is a comprehensive web application designed to streamline the
-sales process for electronic goods. The primary objective of Electron Eon is to
-provide a one-stop destination for purchasing a wide range of electronic
-products, including smartphones, laptops, home appliances, and more.
+"Electron Eon" is an e-commerce web application designed to facilitate the sales process of electronic goods. The primary objective of this website is to provide a one-stop destination for purchasing a wide range of electronic products, including smartphones, laptops, home appliances, and more. The project is created as part of the personal porfolio to demonstrate web development and deploymen skills.
 
 ## 2.0 Usage
+
+The following instructions assume you are not following the `README.md` in the monorepo's root directory, which suggest using Docker Compose to run this full stack web app.
 
 ### 2.1 Prerequisite
 
 1. MySQL Community Server and Workbench installed
-2. JDK Development Kit 21.0.3
+2. JDK Development Kit 21+
 3. IDE for Java such as IntelliJ Community Edition
 4. IDE for JavaScript such as VS Code
 
-### 2.2 Steps
+### 2.2 Steps without Docker Compose
 
-1. Clone the server repo and resolve Maven dependencies as needed
+1. Clone the repo and resolve Maven dependencies as needed:
 
 ```bash
-git clone https://github.com/mg86837242/electron-eon-server.git
+git clone https://github.com/mg86837242/electron-eon.git
 ```
 
-2. Create `application.properties` then modify the following properties to match your MySQL Workbench local connection
+2. Navigate to the `api-server` directory, then create `application.properties` based on `application.properties.example:
 
 ```bash
-cd electron-eon-server
+cd api-server
 cp src/main/resources/application.properties.example src/main/resources/application.properties
 ```
+
+Modify the following properties to match your MySQL Workbench local connection:
 
 ```
 # application.properties
@@ -37,21 +38,20 @@ spring.datasource.username=********
 spring.datasource.password=********
 ```
 
-3. Follow the instructions of `src/main/resources/certs/README.md` to create keys for authentication
+3. Follow the instructions of `src/main/resources/certs/README.md` to create keys for JWT authentication.
 
-4. Start the Spring Boot application `src/main/java/dev/sy/ElectronEonApplication.java` by using such as Java IDE
+4. Start the Spring Boot application `src/main/java/dev/sy/ElectronEonApplication.java` by using a Java IDE.
 
-5. Clone the server repo and resolve Maven dependencies as needed
+5. Navigate to the `client` directory, then install dependencies:
 
 ```bash
-git clone https://github.com/mg86837242/electron-eon-client.git
+cd electron-eon-client
+npm install
 ```
 
 6. Start the front-end server and follow the Vite prompts in the terminal to view the app in the browser
 
 ```bash
-cd electron-eon-client
-npm install
 npm run dev
 ```
 
@@ -105,7 +105,7 @@ npm run dev
 - Responsive Design:
   - The web app should be responsive and accessible across different devices
     and screen sizes.
-- SCOPE EXCLUSION:
+- **Scope Exclusion**:
   - Payment integration:
     - Users should be able to pay for orders using various payment methods (
       e.g., credit card, PayPal).

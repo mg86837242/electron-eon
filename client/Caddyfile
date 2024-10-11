@@ -16,7 +16,7 @@
 	encode zstd gzip
 	# Caddyfile for SPA: https://caddyserver.com/docs/caddyfile/patterns#single-page-apps-spas
 	handle /api/v1/* {
-		# Choose either of the following 2:
+		# Choose either of the following two:
 		# (1) For Docker Compose local deployment
 		# reverse_proxy http://localhost:8081
 		# (2) For AWS Copilot CLI, use ECS Service Connect: https://aws.github.io/copilot-cli/docs/developing/svc-to-svc-communication/#service-connect-added-in-v1240
