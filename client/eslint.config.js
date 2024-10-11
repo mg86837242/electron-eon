@@ -2,6 +2,7 @@ import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import pluginQuery from '@tanstack/eslint-plugin-query';
 import eslintConfigPrettier from 'eslint-config-prettier';
+import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import reactJsxRuntime from 'eslint-plugin-react/configs/jsx-runtime.js';
 import reactRecommended from 'eslint-plugin-react/configs/recommended.js';
@@ -26,10 +27,8 @@ export default [
   // https://github.com/jsx-eslint/eslint-plugin-react?tab=readme-ov-file#configuring-shared-settings
   reactRecommended,
   reactJsxRuntime,
+  // https://tanstack.com/query/latest/docs/eslint/eslint-plugin-query
   ...pluginQuery.configs['flat/recommended'],
-  // https://eslint.org/docs/latest/use/configure/migration-guide#using-eslintrc-configs-in-flat-config
-  // mimic ESLintRC-style extends
-  ...compat.extends('plugin:react-hooks/recommended'),
   // "make sure to put it (`eslint-config-prettier`) last": https://github.com/prettier/eslint-config-prettier?tab=readme-ov-file#installation
   eslintConfigPrettier,
   // https://eslint.org/docs/latest/use/configure/configuration-files#globally-ignoring-files-with-ignores
@@ -41,7 +40,6 @@ export default [
       // customized:
       '**/__*/**',
       'tailwind.config.cjs',
-      '**/loginFrontendExample.js',
     ],
   },
   {
@@ -57,6 +55,8 @@ export default [
       },
     },
     plugins: {
+      // https://github.com/facebook/react/issues/28313#issuecomment-2363692765
+      'react-hooks': reactHooks,
       // https://github.com/ArnaudBarre/eslint-plugin-react-refresh (PS RRD6.4+ will likely violate this plugin's rules)
       'react-refresh': reactRefresh,
       // https://github.com/lydell/eslint-plugin-simple-import-sort
@@ -68,6 +68,8 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
+      // https://github.com/facebook/react/issues/28313#issuecomment-2363692765
+      ...reactHooks.configs.recommended.rules,
       // https://dev.to/julioxavierr/sorting-your-imports-with-eslint-3ped && `override` in flat config: https://eslint.org/docs/latest/use/configure/migration-guide#glob-based-configs
       'simple-import-sort/imports': [
         'warn',

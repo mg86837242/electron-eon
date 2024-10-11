@@ -10,7 +10,7 @@
     "format": "prettier --write .",
     "lint": "eslint . --max-warnings 50",
     "lint:fix": "eslint . --max-warnings 50 --fix",
-    "prepare": "if [ \"$NODE_ENV\" != \"production\" ]; then simple-git-hooks; fi"
+    "prepare": "bash -c 'if [ \"$NODE_ENV\" != \"production\" ]; then simple-git-hooks; fi'"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx,json,css,md}": [
@@ -49,7 +49,7 @@
     "eslint": "^9.12.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.37.1",
-    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-hooks": "^5.1.0-rc-70fb1363-20241010",
     "eslint-plugin-react-refresh": "^0.4.12",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "globals": "^15.11.0",
