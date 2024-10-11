@@ -10,7 +10,7 @@
     "format": "prettier --write .",
     "lint": "eslint . --max-warnings 50",
     "lint:fix": "eslint . --max-warnings 50 --fix",
-    "prepare": "bash -c 'if [ \"$NODE_ENV\" != \"production\" ]; then simple-git-hooks; fi'"
+    "prepare": "if [ \"$NODE_ENV\" != \"production\" ]; then simple-git-hooks; fi"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx,json,css,md}": [
