@@ -1,0 +1,8 @@
+### Project-Specific ###
+.env
+.idea/
+.vscode/
+*.bak
+*.env
+**/__unused__/
+project-hierarchy.txt

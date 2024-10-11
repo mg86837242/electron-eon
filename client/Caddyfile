@@ -1,0 +1,37 @@
+{
+	# @see : https://caddyserver.com/docs/caddyfile/options#server-options:
+	# "Automatic HTTPS will create a server listening on port 80 ..."
+	servers :80 {
+		# AWS ALB doesn't support HTTP/3 as of 2024
+		protocols h1 h2
+	}
+}
+
+# @see: https://caddyserver.com/docs/caddyfile/concepts#addresses
+# @see: https://caddyserver.com/docs/caddyfile/options#auto-https
+:80 {
+	log {
+		output file /var/log/access.log
+	}
+	encode zstd gzip
+	# Caddyfile for SPA: https://caddyserver.com/docs/caddyfile/patterns#single-page-apps-spas
+	handle /api/v1/* {
+		# Choose either of the following 2:
+		# (1) For Docker Compose local deployment
+		# reverse_proxy http://localhost:8081
+		# (2) For AWS Copilot CLI, use ECS Service Connect: https://aws.github.io/copilot-cli/docs/developing/svc-to-svc-communication/#service-connect-added-in-v1240
+		reverse_proxy http://api-server:8081
+	}
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}
+
+# Useful links:
+# -- https://hub.docker.com/_/caddy
+# -- https://caddyserver.com/docs/caddyfile/concepts
+# -- install `caddy` by using Chocolatey (Windows) so that the VS Code
+#    extension (also a formmater) 'Caddyfile Support' can work: https://caddyserver.com/docs/install#chocolatey-windows
+# -- complex example: https://caddy.community/t/translating-nginx-caching-configuration-to-caddy-using-caddyserver-cache-handler/22128/3

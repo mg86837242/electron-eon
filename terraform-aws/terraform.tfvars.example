@@ -1,0 +1,6 @@
+vpc_id = "vpc-12345678901234567"
+vpc_private_subnets = [
+  "subnet-12345678901234567",
+  "subnet-12345678901234567"
+]
+rds_db_password = "The password for the master DB user of the RDS instance"

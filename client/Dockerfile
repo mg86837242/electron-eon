@@ -1,0 +1,89 @@
+# syntax=docker/dockerfile:1
+
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Dockerfile reference guide at
+# https://docs.docker.com/go/dockerfile-reference/
+
+# Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
+
+ARG NODE_VERSION=20.17.0
+
+################################################################################
+# Use node image for base image for all stages.
+FROM node:${NODE_VERSION}-alpine AS base
+
+# Set working directory for all build stages.
+WORKDIR /usr/src/app
+
+################################################################################
+# Create a stage for installing production dependecies.
+FROM base AS deps
+
+# Download dependencies as a separate step to take advantage of Docker's caching.
+# Leverage a cache mount to /root/.npm to speed up subsequent builds.
+# Leverage bind mounts to package.json and package-lock.json to avoid having to copy them
+# into this layer.
+RUN --mount=type=bind,source=package.json,target=package.json \
+    --mount=type=bind,source=package-lock.json,target=package-lock.json \
+    --mount=type=cache,target=/root/.npm \
+    npm ci --omit=dev
+
+################################################################################
+# Create a stage for building the application.
+FROM deps AS build
+
+# Define variables to be passed at build-time to the builder – Vite
+# @see: https://vitejs.dev/guide/env-and-mode.html#env-files:
+# "environment variables that already exist when Vite is executed have
+# the highest priority and will not be overwritten by `.env` files."
+# @see: https://stackoverflow.com/questions/77486735/docker-with-vite-env-variables-are-undefined-inside-the-docker-container
+# (Potential improvement: https://docs.docker.com/reference/dockerfile/#arg)
+ARG VITE_APP_NAME
+ARG VITE_BASE_URL
+
+# Load Vite environment variables from the `compose.yaml`'s `build.args`
+# into the build stage
+ENV VITE_APP_NAME=$VITE_APP_NAME
+ENV VITE_BASE_URL=$VITE_BASE_URL
+
+# Download additional development dependencies before building, as some projects require
+# "devDependencies" to be installed to build. If you don't need this, remove this step.
+RUN --mount=type=bind,source=package.json,target=package.json \
+    --mount=type=bind,source=package-lock.json,target=package-lock.json \
+    --mount=type=cache,target=/root/.npm \
+    npm ci
+
+# Copy the rest of the source files into the image.
+COPY . .
+
+# Run the build script and output to `/usr/src/app/dist` (`WORKDIR
+# /usr/src/app`)
+RUN npm run build
+
+################################################################################
+# Create the final stage for serving static files with Caddy.
+FROM caddy:alpine AS final
+
+# Copy the custom Caddyfile to the container.
+COPY Caddyfile /etc/caddy/Caddyfile
+
+# Copy built static files from the build stage to the directory
+# specified by Caddyfile's `root` directive.
+COPY --from=build /usr/src/app/dist /srv
+
+# Copilot's built-in managed EFS: https://aws.github.io/copilot-cli/docs/developing/storage/#managed-efs
+# -- Error message: `validate "storage": cannot specify more than one
+# managed volume per service`: https://github.com/aws/copilot-cli/issues/2921
+# -- Solution: create a single EFS volume that will contain both `/data`
+# and `/config` directories, then in the `client` service's container's
+# startup script (i.e., in the `./client/Dockerfile`), create the
+# necessary subdirectories within the mounted EFS volume, then use
+# environment variables to use the new paths: https://caddyserver.com/docs/conventions#file-locations
+RUN mkdir -p /mnt/efs/data /mnt/efs/config
+ENV XDG_DATA_HOME=/mnt/efs/data
+ENV XDG_CONFIG_HOME=/mnt/efs/config
+
+EXPOSE 80
+
+# Start Caddy to serve the static files.
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile"]

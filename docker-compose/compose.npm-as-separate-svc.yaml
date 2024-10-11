@@ -1,0 +1,101 @@
+services:
+  nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:latest
+    networks:
+      - web
+    ports:
+      - 80:80
+      - 81:81
+      - 443:443
+    volumes:
+      # Prefer volumes over bind mounts
+      - npm-data:/data
+      - npm-letsencrypt:/etc/letsencrypt
+    restart: unless-stopped
+    
+  client:
+    build:
+      context: ./electron-eon-client
+      args:
+        # Pass environment variables during the build stage because Vite
+        # requires them to be injected during the build process.
+        # Variables prefixed with `VITE_` are embedded into the code at
+        # build time, so they are not dynamically available at runtime.
+        # @see: https://vitejs.dev/guide/env-and-mode.html#env-files:
+        # "environment variables that already exist when Vite is
+        # executed have the highest priority and will not be overwritten
+        # by `.env` files.", and `.env.production` will not be used here
+        # since it needs to be placed in the client subdirectory, which
+        # conflicts with centralized environment variable management
+        # @see: https://stackoverflow.com/questions/77486735/docker-with-vite-env-variables-are-undefined-inside-the-docker-container
+        VITE_APP_NAME: ${VITE_APP_NAME}
+        VITE_BASE_URL: ${VITE_BASE_URL}
+    networks:
+      - web
+    # ports:
+      # Uncomment the 5174 port, if it's in the development stage, where
+      # `serve` package is used
+      # - 5174:5174
+    environment:
+      NODE_ENV: production
+    restart: on-failure
+
+  api-server:
+    build:
+      context: ./electron-eon-api-server
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - web
+    ports:
+      - 8081:8081
+    environment:
+      # In Spring Boot, environment variables specified in `compose.
+      # yaml` will override those defined in `application.properties`
+      # at runtime. This is because Spring Boot's external
+      # configuration mechanism prioritizes environment variables over
+      # properties files. So, passing these variables at runtime
+      # ensures that they take precedence without requiring to rebuild
+      # the image.
+      # @see: https://dassiorleando.medium.com/docker-compose-springboot-mysql-41266290eef8
+      SERVER_PORT: ${SB_PORT}
+      SPRING_DATASOURCE_URL: ${MYSQL_URL}
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+
+  mysql:
+    image: mysql:8.0
+    networks:
+      - web
+    ports:
+      # (1) The `ports` mapping makes container port 3306 accessible
+      # on host port 3307 and also to other containers within the
+      # same network. The `expose` attribute is redundant here as it
+      # only makes ports accessible to other containers and not to
+      # the host machine. (2) Publish container port 3306 to host port
+      # 3307 to avoid conflict with existing MySQL Workbench local
+      # connection on port 3306.
+      - 3307:3306
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      # @see: https://hub.docker.com/_/mysql
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    restart: unless-stopped
+    healthcheck:
+      # @see: https://stackoverflow.com/questions/42567475/docker-compose-check-if-mysql-connection-is-ready
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  npm-data:
+  npm-letsencrypt:
+  mysql-data:
+  
+networks:
+  web:
+    driver: bridge

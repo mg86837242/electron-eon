@@ -1,0 +1,7 @@
+FROM caddy:alpine
+
+COPY Caddyfile /etc/caddy/Caddyfile
+
+# The default command 'caddy run' will implicitly run when the container
+# starts.
+# CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile"]
