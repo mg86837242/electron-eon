@@ -158,7 +158,7 @@ public class ProductService {
                 request.category()
         );
 
-        Product savedProduct = productRepository.saveAndFlush(product);
+        Product savedProduct = productRepository.save(product);
 
         return productDTOMapper.apply(savedProduct);
     }

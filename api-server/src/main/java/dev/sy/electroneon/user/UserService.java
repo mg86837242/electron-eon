@@ -104,8 +104,6 @@ public class UserService {
     }
 
     public void addUserForSeeding(User user) {
-        isEmailConflict(user.getEmail());
-
         userRepository.save(user);
     }
 

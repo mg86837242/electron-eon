@@ -37,7 +37,8 @@ public class CartService {
     }
 
     public CartDTO getCartById(UUID cartId) {
-        return cartRepository.findById(cartId)
+        return cartRepository
+                .findById(cartId)
                 .map(cartDTOMapper)
                 .orElseThrow(() -> new NotFoundException(
                         "Cart entry " + cartId + " not found"
@@ -47,7 +48,8 @@ public class CartService {
     public List<CartDTO> getCartsByUserId(UUID userId) {
         isUserExisting(userId);
 
-        return cartRepository.findByUserId(userId)
+        return cartRepository
+                .findByUserId(userId)
                 .stream()
                 .map(cartDTOMapper)
                 .collect(Collectors.toList());
@@ -58,7 +60,8 @@ public class CartService {
 
         isEmailExisting(email);
 
-        return cartRepository.findByEmail(email)
+        return cartRepository
+                .findByEmail(email)
                 .stream()
                 .map(cartDTOMapper)
                 .collect(Collectors.toList());
@@ -86,6 +89,10 @@ public class CartService {
                     "Email " + email + " not found"
             );
         }
+    }
+
+    public void addCartForSeeding(Cart cart) {
+        cartRepository.save(cart);
     }
 
     // For catalogue page

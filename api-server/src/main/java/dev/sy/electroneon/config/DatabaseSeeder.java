@@ -1,5 +1,6 @@
 package dev.sy.electroneon.config;
 
+import dev.sy.electroneon.cart.Cart;
 import dev.sy.electroneon.cart.CartService;
 import dev.sy.electroneon.order.OrderService;
 import dev.sy.electroneon.orderproduct.OrderProductService;
@@ -55,6 +56,7 @@ public class DatabaseSeeder {
     private void seedDatabase() {
         List<User> users = seedUsers();
         List<Product> products = seedProducts();
+        seedCarts(users, products);
     }
 
     private List<User> seedUsers() {
@@ -140,20 +142,51 @@ public class DatabaseSeeder {
         );
     }
 
-    private void seederStart() {
-        LOG.info(">> Database seeder starts...");
+    private void seedCarts(List<User> users, List<Product> products) {
+        Cart cart1 = new Cart(
+                UUID.fromString("51d5f27a-77c9-4fd0-993d-2e2c2c529a0b"),
+                users.getFirst(),
+                products.get(2),
+                1
+        );
+        Cart cart2 = new Cart(
+                UUID.fromString("521421eb-4ca1-47eb-bb18-02188e0c4b6d"),
+                users.getFirst(),
+                products.get(3),
+                2
+        );
+        Cart cart3 = new Cart(
+                UUID.fromString("5331004b-ee52-4458-8fe9-d4bada3fd2be"),
+                users.get(1),
+                products.get(2),
+                3
+        );
+        Cart cart4 = new Cart(
+                UUID.fromString("54360ebf-2a68-4dcc-b9d2-c12c38e1be21"),
+                users.get(1),
+                products.get(3),
+                4
+        );
+        cs.addCartForSeeding(cart1);
+        cs.addCartForSeeding(cart2);
+        cs.addCartForSeeding(cart3);
+        cs.addCartForSeeding(cart4);
     }
 
-    private void seederFinish() {
-        LOG.info(">> Database seeder finished!");
+    private void seedingStart() {
+        LOG.info(">> Database seeding starts...");
+    }
+
+    private void seedingFinished() {
+        LOG.info(">> Database seeding finished!");
     }
 
     @Bean
     public ApplicationRunner runner() {
         return args -> {
-            seederStart();
+            seedingStart();
             seedDatabase();
-            seederFinish();
+            seedingFinished();
         };
     }
 }
