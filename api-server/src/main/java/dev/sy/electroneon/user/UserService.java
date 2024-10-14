@@ -48,43 +48,39 @@ public class UserService {
     }
 
     public List<UserDTO> getAllUsers() {
-        return userRepository.findAll()
+        return userRepository
+                .findAll()
                 .stream()
                 .map(userDTOMapper)
                 .collect(Collectors.toList());
     }
 
     public UserDTO getUserById(UUID userId) {
-        return userRepository.findById(userId)
+        return userRepository
+                .findById(userId)
                 .map(userDTOMapper)
-                .orElseThrow(() -> new NotFoundException(
-                        "User " + userId + " not found"
-                ));
+                .orElseThrow(() -> new NotFoundException("User " + userId + " not found"));
     }
 
     public UserDTO getCurrUser(Authentication authn) {
         String email = authn.getName();
 
-        return userRepository.findByEmail(email)
+        return userRepository
+                .findByEmail(email)
                 .map(userDTOMapper)
                 .orElseThrow(() -> new NotFoundException(
-                        "User not found based on the principal's email: " + email
-                ));
+                        "User not found based on the principal's email: " + email));
     }
 
     public void isUserExisting(UUID userId) {
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException(
-                    "User " + userId + " not found"
-            );
+            throw new NotFoundException("User " + userId + " not found");
         }
     }
 
     public void isEmailConflict(String email) {
         if (userRepository.existsByEmail(email)) {
-            throw new ConflictException(
-                    "Email " + email + " has already been used"
-            );
+            throw new ConflictException("Email " + email + " has already been used");
         }
     }
 
@@ -107,51 +103,38 @@ public class UserService {
         return userDTOMapper.apply(registeredUser);
     }
 
-    /**
-     * Adds a {@link User} object to the database.
-     * This method is used specifically for database seeding.
-     * It expects a fully populated {@link User} object.
-     *
-     * @param user the {@link User} object to be persisted
-     */
-    public void addUser(User user) {
+    public void addUserForSeeding(User user) {
         isEmailConflict(user.getEmail());
 
         userRepository.save(user);
     }
 
     public void updateUserById(
-            UUID userId,
-            UserUpdateRequest request
+            UUID userId, UserUpdateRequest request
     ) {
         // No usage of DTO to allow updating pass
         User user = userRepository
                 .findById(userId)
-                .orElseThrow(() -> new NotFoundException(
-                        "User " + userId + " not found"
-                ));
+                .orElseThrow(() -> new NotFoundException("User " + userId + " not found"));
 
         updateUserUtil(user, request);
     }
 
     public void updateCurrUser(
-            Authentication authn,
-            UserUpdateRequest request
+            Authentication authn, UserUpdateRequest request
     ) {
         String email = authn.getName();
 
         User user = userRepository
                 .findByEmail(email)
                 .orElseThrow(() -> new NotFoundException(
-                        "User not found based on the principal's email: " + email
-                ));
+                        "User not found based on the principal's email: " + email));
 
         updateUserUtil(user, request);
     }
 
     private void updateUserUtil(
-            User user,
-            UserUpdateRequest request
+            User user, UserUpdateRequest request
     ) {
         boolean shouldUpdate = false;
 
@@ -166,12 +149,11 @@ public class UserService {
         }
 
         if (request.password() != null && !Objects.equals(
-                passwordEncoder.encode(request.password()),
+                passwordEncoder.encode(
+                        request.password()),
                 passwordEncoder.encode(user.getPassword())
         )) {
-            user.setPassword(
-                    passwordEncoder.encode(request.password())
-            );
+            user.setPassword(passwordEncoder.encode(request.password()));
             shouldUpdate = true;
         }
 
@@ -220,8 +202,7 @@ public class UserService {
         UUID userId = userRepository
                 .findIdByEmail(email)
                 .orElseThrow(() -> new NotFoundException(
-                        "User not found based on the principal's email: " + email
-                ));
+                        "User not found based on the principal's email: " + email));
 
         deleteUserUtil(userId);
     }

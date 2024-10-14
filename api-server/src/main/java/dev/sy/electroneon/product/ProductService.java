@@ -38,26 +38,29 @@ public class ProductService {
         return productRepository
                 .findAllByIsArchivedFalse()
                 .stream()
-                .map(productDTOMapper)
+                .map(
+                        productDTOMapper)
                 .collect(Collectors.toList());
     }
 
     public ProductDTO getProductById(UUID productId) {
         return productRepository
                 .findByIdAndIsArchivedFalse(productId)
-                .map(productDTOMapper)
+                .map(
+                        productDTOMapper)
                 .orElseThrow(() -> new NotFoundException(
-                        "Product " + productId + " not found"
-                ));
+                        "Product " + productId + " not found"));
     }
 
     public List<ProductDTO> getProductsByCategory(String categoryStr) {
-        Category category = Stream.of(Category.values())
-                .filter(value -> value.getCode().equals(categoryStr))
+        Category category = Stream
+                .of(Category.values())
+                .filter(value -> value
+                        .getCode()
+                        .equals(categoryStr))
                 .findFirst()
                 .orElseThrow(() -> new BadRequestException(
-                        "Invalid query parameter" + categoryStr
-                ));
+                        "Invalid query parameter" + categoryStr));
 
         return productRepository
                 .findByCategoryAndIsArchivedFalse(category)
@@ -77,8 +80,7 @@ public class ProductService {
         UUID userId = userRepository
                 .findIdByEmail(email)
                 .orElseThrow(() -> new NotFoundException(
-                        "User not found based on the principal's email: " + email
-                ));
+                        "User not found based on the principal's email: " + email));
 
         // Use interface-based project (or classed-based, aka DTO) to add the
         // `quantity` field of the `Cart` entity to each `Product` object in
@@ -88,8 +90,7 @@ public class ProductService {
     }
 
     public ProductWithQtyInCartProjection getProdWithCartQtyByIdForCurrUser(
-            Authentication authn,
-            UUID productId
+            Authentication authn, UUID productId
     ) {
         String email = authn.getName();
 
@@ -99,8 +100,7 @@ public class ProductService {
         UUID userId = userRepository
                 .findIdByEmail(email)
                 .orElseThrow(() -> new NotFoundException(
-                        "User not found based on the principal's email: " + email
-                ));
+                        "User not found based on the principal's email: " + email));
 
         // Use interface-based project (or classed-based, aka DTO) to add the
         // `quantity` field of the `Cart` entity to the `Product` object
@@ -109,14 +109,11 @@ public class ProductService {
                         userId,
                         productId
                 )
-                .orElseThrow(() -> new NotFoundException(
-                        "Product " + productId + " not found"
-                ));
+                .orElseThrow(() -> new NotFoundException("Product " + productId + " not found"));
     }
 
     public List<ProductWithQtyInCartProjection> getProdsWithCartQtyByCategoryForCurrUser(
-            Authentication authn,
-            String categoryStr
+            Authentication authn, String categoryStr
     ) {
         String email = authn.getName();
 
@@ -126,29 +123,30 @@ public class ProductService {
         UUID userId = userRepository
                 .findIdByEmail(email)
                 .orElseThrow(() -> new NotFoundException(
-                        "User not found based on the principal's email: " + email
-                ));
+                        "User not found based on the principal's email: " + email));
 
         // Parse the category string
-        Category category = Stream.of(Category.values())
-                .filter(value -> value.getCode().equals(categoryStr))
+        Category category = Stream
+                .of(Category.values())
+                .filter(value -> value
+                        .getCode()
+                        .equals(categoryStr))
                 .findFirst()
                 .orElseThrow(() -> new BadRequestException(
-                        "Invalid path variable"
-                ));
+                        "Invalid path variable"));
 
         // Use interface-based project (or classed-based, aka DTO) to add the
         // `quantity` field of the `Cart` entity to each `Product` object in
         // the list
         return productRepository.findProductsWithQtyInCartByUserIdAndCategoryAndIsArchivedFalse(
-                userId, category);
+                userId,
+                category
+        );
     }
 
     public void isEmailExisting(String email) {
         if (!userRepository.existsByEmail(email)) {
-            throw new NotFoundException(
-                    "Email " + email + " not found"
-            );
+            throw new NotFoundException("Email " + email + " not found");
         }
     }
 
@@ -165,15 +163,16 @@ public class ProductService {
         return productDTOMapper.apply(savedProduct);
     }
 
+    public void addProductForSeeding(Product product) {
+        productRepository.save(product);
+    }
+
     public void updateProductById(
-            UUID productId,
-            ProductUpdateRequest request
+            UUID productId, ProductUpdateRequest request
     ) {
         Product product = productRepository
                 .findByIdAndIsArchivedFalse(productId)
-                .orElseThrow(() -> new NotFoundException(
-                        "Product " + productId + " not found"
-                ));
+                .orElseThrow(() -> new NotFoundException("Product " + productId + " not found"));
 
         boolean shouldUpdate = false;
 
@@ -219,9 +218,7 @@ public class ProductService {
     public void deleteProductById(UUID productId) {
         Product product = productRepository
                 .findByIdAndIsArchivedFalse(productId)
-                .orElseThrow(() -> new NotFoundException(
-                        "Product " + productId + " not found"
-                ));
+                .orElseThrow(() -> new NotFoundException("Product " + productId + " not found"));
 
         product.setArchived(true);
 
