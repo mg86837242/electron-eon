@@ -2,7 +2,9 @@ package dev.sy.electroneon.config;
 
 import dev.sy.electroneon.cart.Cart;
 import dev.sy.electroneon.cart.CartService;
+import dev.sy.electroneon.order.Order;
 import dev.sy.electroneon.order.OrderService;
+import dev.sy.electroneon.orderproduct.OrderProduct;
 import dev.sy.electroneon.orderproduct.OrderProductService;
 import dev.sy.electroneon.product.Category;
 import dev.sy.electroneon.product.Product;
@@ -18,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,6 +60,8 @@ public class DatabaseSeeder {
         List<User> users = seedUsers();
         List<Product> products = seedProducts();
         seedCarts(users, products);
+        List<Order> orders = seedOrders(users);
+        seedOrderProducts(orders, products);
     }
 
     private List<User> seedUsers() {
@@ -144,25 +149,29 @@ public class DatabaseSeeder {
 
     private void seedCarts(List<User> users, List<Product> products) {
         Cart cart1 = new Cart(
-                UUID.fromString("51d5f27a-77c9-4fd0-993d-2e2c2c529a0b"),
+                UUID.fromString(
+                        "51d5f27a-77c9-4fd0-993d-2e2c2c529a0b"),
                 users.getFirst(),
                 products.get(2),
                 1
         );
         Cart cart2 = new Cart(
-                UUID.fromString("521421eb-4ca1-47eb-bb18-02188e0c4b6d"),
+                UUID.fromString(
+                        "521421eb-4ca1-47eb-bb18-02188e0c4b6d"),
                 users.getFirst(),
                 products.get(3),
                 2
         );
         Cart cart3 = new Cart(
-                UUID.fromString("5331004b-ee52-4458-8fe9-d4bada3fd2be"),
+                UUID.fromString(
+                        "5331004b-ee52-4458-8fe9-d4bada3fd2be"),
                 users.get(1),
                 products.get(2),
                 3
         );
         Cart cart4 = new Cart(
-                UUID.fromString("54360ebf-2a68-4dcc-b9d2-c12c38e1be21"),
+                UUID.fromString(
+                        "54360ebf-2a68-4dcc-b9d2-c12c38e1be21"),
                 users.get(1),
                 products.get(3),
                 4
@@ -171,6 +180,64 @@ public class DatabaseSeeder {
         cs.addCartForSeeding(cart2);
         cs.addCartForSeeding(cart3);
         cs.addCartForSeeding(cart4);
+    }
+
+    private List<Order> seedOrders(List<User> users) {
+        Order order1 = new Order(
+                UUID.fromString(
+                        "41c0c8c8-6de5-4836-a934-bdbb5ba6bfd1"),
+                users.getFirst(),
+                "123 ABC Street",
+                "DEF",
+                LocalDateTime.now()
+        );
+        Order order2 = new Order(
+                UUID.fromString(
+                        "42ecab4a-344e-49ba-94f7-ac5f32fe1b82"),
+                users.get(1),
+                "123 ABC Street",
+                "DEF",
+                LocalDateTime.now()
+        );
+        os.addOrderForSeeding(order1);
+        os.addOrderForSeeding(order2);
+
+        return List.of(order1, order2);
+    }
+
+    private void seedOrderProducts(List<Order> orders, List<Product> products) {
+        OrderProduct orderProduct1 = new OrderProduct(
+                UUID.fromString(
+                        "31b7c3c0-83a4-42bb-97cc-de837b6015a7"),
+                orders.getFirst(),
+                products.getFirst(),
+                1
+        );
+        OrderProduct orderProduct2 = new OrderProduct(
+                UUID.fromString(
+                        "3283e51c-fe1a-4180-a03d-911181435336"),
+                orders.getFirst(),
+                products.get((1)),
+                2
+        );
+        OrderProduct orderProduct3 = new OrderProduct(
+                UUID.fromString(
+                        "33200d98-f9d3-48d1-b3e8-f87ee833f71f"),
+                orders.get(1),
+                products.getFirst(),
+                3
+        );
+        OrderProduct orderProduct4 = new OrderProduct(
+                UUID.fromString(
+                        "3420cfa9-854d-4e53-b076-6d7493314c20"),
+                orders.get(1),
+                products.get(1),
+                4
+        );
+        ops.addOrderProductForSeeding(orderProduct1);
+        ops.addOrderProductForSeeding(orderProduct2);
+        ops.addOrderProductForSeeding(orderProduct3);
+        ops.addOrderProductForSeeding(orderProduct4);
     }
 
     private void seedingStart() {

@@ -178,13 +178,17 @@ public class OrderService {
                         savedOrderProducts
                 );
 
-        // Discard the cart entries associated w/ the curr authenticated user after
-        // placing the order (if there's a feature to let users tick what items
-        // to check out, then this line needs to be removed, or replaced with
+        // Discard the cart entries associated w/ the curr authenticated user
+        // after placing the order (if there's a feature to let users tick what
+        // items to check out, then this line needs to be removed, or replaced with
         // logics to check what item(s) needs to be removed from the cart)
         cartRepository.deleteByUserId(user.getId());
 
         return savedOrderWithProductsDTO;
+    }
+
+    public void addOrderForSeeding(Order order) {
+        orderRepository.save(order);
     }
 
     public void updateOrderById(

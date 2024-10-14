@@ -5,8 +5,8 @@ server.port=${SERVER_PORT:8080}
 server.servlet.context-path=/api/v1
 
 ### spring.datasource.X ###
-### https://github.com/spring-projects/spring-boot/issues/12766 ###
-### https://stackoverflow.com/questions/47580247/optional-environment-variables-in-spring-app ###
+### https://stackoverflow.com/questions/47580247/optional-environment-variables-in-spring-app
+### https://stackoverflow.com/questions/43249308/cant-create-a-mysql-database-using-spring-boot
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 spring.datasource.url=${MYSQL_URL:jdbc:mysql://localhost:3306/electron_eon?createDatabaseIfNotExist=true}
 spring.datasource.username=${MYSQL_USER:my_username}
@@ -15,7 +15,6 @@ spring.datasource.password=${MYSQL_PASSWORD:my_password}
 ### spring.jpa.X ###
 ### https://github.com/spring-projects/spring-boot/pull/25129
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
-#spring.jpa.hibernate.ddl-auto=create
 spring.jpa.properties.jakarta.persistence.schema-generation.database.action=drop-and-create
 spring.jpa.show-sql=true
 
@@ -25,6 +24,6 @@ spring.jpa.show-sql=true
 logging.level.root=INFO
 
 ### JwtDecoder ###
-### https://www.danvega.dev/blog/spring-security-jwt ###
+### https://www.danvega.dev/blog/spring-security-jwt
 rsa.private-key=classpath:certs/private.pem
 rsa.public-key=classpath:certs/public.pem

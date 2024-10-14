@@ -111,6 +111,10 @@ public class OrderProductService {
         return orderProductDTOMapper.apply(savedOrderProduct);
     }
 
+    public void addOrderProductForSeeding(OrderProduct orderProduct) {
+        orderProductRepository.save(orderProduct);
+    }
+
     @Transactional
     public void updateProductQtyInOrderById(
             UUID orderProductId,
