@@ -102,9 +102,22 @@ public class UserService {
                 Role.CUSTOMER
         );
 
-        User registeredUser = userRepository.saveAndFlush(user);
+        User registeredUser = userRepository.save(user);
 
         return userDTOMapper.apply(registeredUser);
+    }
+
+    /**
+     * Adds a {@link User} object to the database.
+     * This method is used specifically for database seeding.
+     * It expects a fully populated {@link User} object.
+     *
+     * @param user the {@link User} object to be persisted
+     */
+    public void addUser(User user) {
+        isEmailConflict(user.getEmail());
+
+        userRepository.save(user);
     }
 
     public void updateUserById(

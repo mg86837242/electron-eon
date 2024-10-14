@@ -38,96 +38,97 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-        private final RsaKeyProperties rsaKeys;
+    private final RsaKeyProperties rsaKeys;
 
-        public SecurityConfig(RsaKeyProperties rsaKeys) {
-                this.rsaKeys = rsaKeys;
-        }
+    public SecurityConfig(RsaKeyProperties rsaKeys) {
+        this.rsaKeys = rsaKeys;
+    }
 
-        @Bean
-        JwtDecoder jwtDecoder() {
-                return NimbusJwtDecoder.withPublicKey(rsaKeys.publicKey()).build();
-        }
+    @Bean
+    JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withPublicKey(rsaKeys.publicKey()).build();
+    }
 
-        @Bean
-        JwtEncoder jwtEncoder() {
-                JWK jwk = new RSAKey.Builder(rsaKeys.publicKey())
-                                .privateKey(rsaKeys.privateKey())
-                                .build();
-                JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
-                return new NimbusJwtEncoder(jwks);
-        }
+    @Bean
+    JwtEncoder jwtEncoder() {
+        JWK jwk = new RSAKey.Builder(rsaKeys.publicKey())
+                .privateKey(rsaKeys.privateKey())
+                .build();
+        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwks);
+    }
 
-        @Bean
-        public PasswordEncoder passwordEncoder() {
-                return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
 
-        @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-                return http
-                                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                                .csrf(AbstractHttpConfigurer::disable)
-                                .authorizeHttpRequests(authorize -> authorize
-                                                .requestMatchers("/admin/**")
-                                                .hasAuthority("SCOPE_ADMIN")
-                                                .requestMatchers("/customer/**")
-                                                .hasAnyAuthority("SCOPE_ADMIN", "SCOPE_CUSTOMER")
-                                                .anyRequest()
-                                                .permitAll())
-                                .sessionManagement(session -> session.sessionCreationPolicy(
-                                                SessionCreationPolicy.STATELESS))
-                                .oauth2ResourceServer(server -> server.jwt(withDefaults()))
-                                .exceptionHandling(ex -> ex
-                                                .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                                                .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
-                                .build();
-        }
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/admin/**")
+                        .hasAuthority("SCOPE_ADMIN")
+                        .requestMatchers("/customer/**")
+                        .hasAnyAuthority("SCOPE_ADMIN", "SCOPE_CUSTOMER")
+                        .anyRequest()
+                        .permitAll())
+                .sessionManagement(session -> session.sessionCreationPolicy(
+                        SessionCreationPolicy.STATELESS))
+                .oauth2ResourceServer(server -> server.jwt(withDefaults()))
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
+                .build();
+    }
 
-        /*
-         * This will allow the /auth/login endpoint to use basic auth and
-         * everything else uses the SFC above
-         */
-        @Order(Ordered.HIGHEST_PRECEDENCE)
-        @Bean
-        SecurityFilterChain tokenSecurityFilterChain(HttpSecurity http) throws Exception {
-                return http
-                                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                                .csrf(AbstractHttpConfigurer::disable)
-                                .securityMatcher(new AntPathRequestMatcher("/auth/login"))
-                                .authorizeHttpRequests(auth -> auth
-                                                .anyRequest()
-                                                .authenticated())
-                                .sessionManagement(session -> session.sessionCreationPolicy(
-                                                SessionCreationPolicy.STATELESS))
-                                .httpBasic(withDefaults())
-                                .exceptionHandling(ex -> {
-                                        ex.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint());
-                                        ex.accessDeniedHandler(new BearerTokenAccessDeniedHandler());
-                                })
-                                .build();
-        }
+    /*
+     * This will allow the /auth/login endpoint to use basic auth and
+     * everything else uses the `SecurityFilterChain` above
+     */
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    @Bean
+    SecurityFilterChain tokenSecurityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
+                .securityMatcher(new AntPathRequestMatcher("/auth/login"))
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest()
+                        .authenticated())
+                .sessionManagement(session -> session.sessionCreationPolicy(
+                        SessionCreationPolicy.STATELESS))
+                .httpBasic(withDefaults())
+                .exceptionHandling(ex -> {
+                    ex.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint());
+                    ex.accessDeniedHandler(new BearerTokenAccessDeniedHandler());
+                })
+                .build();
+    }
 
-        @Bean
-        public CorsConfigurationSource corsConfigurationSource() {
-                CorsConfiguration configuration = new CorsConfiguration();
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
 
-                // The following link can be found by running `copilot svc show -n client`
-                configuration.setAllowedOrigins(List.of(
-                                "http://electr-publi-azlhzncu2erh-1647396286.us-east-1.elb.amazonaws.com"));
-                configuration.setAllowedHeaders(List.of("*"));
-                configuration.setExposedHeaders(List.of("*"));
-                configuration.setAllowedMethods(List.of(
-                                "GET",
-                                "POST",
-                                "PATCH",
-                                "DELETE"));
-                configuration.setAllowCredentials(true);
+        // The following link can be found by running `copilot svc show -n client`
+        configuration.setAllowedOrigins(List.of(
+                "http://electr-publi-azlhzncu2erh-1647396286.us-east-1.elb.amazonaws.com"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setExposedHeaders(List.of("*"));
+        configuration.setAllowedMethods(List.of(
+                "GET",
+                "POST",
+                "PATCH",
+                "DELETE"
+        ));
+        configuration.setAllowCredentials(true);
 
-                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-                source.registerCorsConfiguration("/**", configuration);
-                return source;
-        }
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }
 
 // References:
