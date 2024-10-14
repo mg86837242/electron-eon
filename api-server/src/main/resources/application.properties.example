@@ -13,9 +13,10 @@ spring.datasource.username=${MYSQL_USER:my_username}
 spring.datasource.password=${MYSQL_PASSWORD:my_password}
 
 ### spring.jpa.X ###
+### https://github.com/spring-projects/spring-boot/pull/25129
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
 #spring.jpa.hibernate.ddl-auto=create
-spring.jpa.properties.jakarta.persistence.schema-generation.database.action=create
+spring.jpa.properties.jakarta.persistence.schema-generation.database.action=drop-and-create
 spring.jpa.show-sql=true
 
 ### Simulate hibernate.format_sql ###

@@ -9,6 +9,7 @@ import dev.sy.electroneon.product.ProductService;
 import dev.sy.electroneon.user.Role;
 import dev.sy.electroneon.user.User;
 import dev.sy.electroneon.user.UserService;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationRunner;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -49,7 +51,13 @@ public class DatabaseSeeder {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     private void seedDatabase() {
+        List<User> users = seedUsers();
+        List<Product> products = seedProducts();
+    }
+
+    private List<User> seedUsers() {
         User user1 = new User(
                 UUID.fromString("1de64dad-aae0-4004-b4bc-f28c1f46589a"),
                 "john@server.com",
@@ -69,6 +77,10 @@ public class DatabaseSeeder {
         us.addUserForSeeding(user1);
         us.addUserForSeeding(user2);
 
+        return List.of(user1, user2);
+    }
+
+    private List<Product> seedProducts() {
         Product product1 = new Product(
                 UUID.fromString("2103757c-2e2d-4dfb-befd-987f4fcce43a"),
                 "Dell Inspiron 3511 Laptop",
@@ -117,6 +129,15 @@ public class DatabaseSeeder {
         ps.addProductForSeeding(product4);
         ps.addProductForSeeding(product5);
         ps.addProductForSeeding(product6);
+
+        return List.of(
+                product1,
+                product2,
+                product3,
+                product4,
+                product5,
+                product6
+        );
     }
 
     private void seederStart() {
