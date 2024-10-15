@@ -9,16 +9,7 @@
     "preview": "vite preview",
     "format": "prettier --write .",
     "lint": "eslint . --max-warnings 50",
-    "lint:fix": "eslint . --max-warnings 50 --fix",
-    "prepare": "if [ \"$NODE_ENV\" != \"production\" ]; then simple-git-hooks; fi"
-  },
-  "lint-staged": {
-    "**/*.{js,jsx,ts,tsx,json,css,md}": [
-      "npx prettier --write --ignore-unknown"
-    ]
-  },
-  "simple-git-hooks": {
-    "pre-commit": "npx lint-staged"
+    "lint:fix": "eslint . --max-warnings 50 --fix"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
@@ -53,9 +44,7 @@
     "eslint-plugin-react-refresh": "^0.4.12",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "globals": "^15.11.0",
-    "lint-staged": "^15.2.10",
     "prettier": "3.2.5",
-    "simple-git-hooks": "^2.11.1",
     "vite": "^5.4.8",
     "vite-plugin-svgr": "^4.2.0"
   }
