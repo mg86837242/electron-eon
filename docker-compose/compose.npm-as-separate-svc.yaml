@@ -59,10 +59,10 @@ services:
       # ensures that they take precedence without requiring to rebuild
       # the image.
       # @see: https://dassiorleando.medium.com/docker-compose-springboot-mysql-41266290eef8
-      SERVER_PORT: ${SB_PORT}
-      SPRING_DATASOURCE_URL: ${MYSQL_URL}
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      SERVER_PORT: ${SERVER_PORT}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
 
   mysql:
     image: mysql:8.0

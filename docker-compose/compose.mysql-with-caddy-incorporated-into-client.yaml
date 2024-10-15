@@ -33,7 +33,7 @@ services:
     build:
       context: ./api-server
     depends_on:
-      postgresql:
+      mysql:
         condition: service_healthy
     networks:
       - web
@@ -49,45 +49,37 @@ services:
       # the image.
       # @see: https://dassiorleando.medium.com/docker-compose-springboot-mysql-41266290eef8
       SERVER_PORT: ${SERVER_PORT}
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_DATASOURCE_URL: ${MYSQL_URL}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
     restart: unless-stopped
 
-  postgresql:
-    image: postgres:17
+  mysql:
+    image: mysql:8.0
     networks:
       - web
     ports:
-      # (1) The `ports` mapping makes container port 5432 accessible
-      # on host port 5433 and also to other containers within the
+      # (1) The `ports` mapping makes container port 3306 accessible
+      # on host port 3307 and also to other containers within the
       # same network. The `expose` attribute would be redundant here as
       # it'd only makes ports accessible to other containers and not to
-      # the host machine. (2) Publish container port 5432 to host port
-      # 5433 to avoid conflict with existing local connection on port
-      # 5432.
-      - 5433:5432
+      # the host machine. (2) Publish container port 3306 to host port
+      # 3307 to avoid conflict with existing MySQL Workbench local
+      # connection on port 3306.
+      - 3307:3306
     volumes:
-      # @see: https://github.com/docker-library/docs/blob/master/postgres/README.md#where-to-store-data
-      # i.e., prefer volumes over bind mounts
-      - postgres-17-data:/var/lib/postgresql/data
+      - mysql-data:/var/lib/mysql
     environment:
-      # @see: https://hub.docker.com/_/postgres
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      # see: https://stackoverflow.com/questions/60193781/postgres-with-docker-compose-gives-fatal-role-root-does-not-exist-error
-      # For error message in the container: `FATAL: role "root" does not
-      # exist`: https://docs.docker.com/reference/compose-file/services/#user
-      PGUSER: postgres
+      # @see: https://hub.docker.com/_/mysql
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     restart: unless-stopped
     healthcheck:
-      # @see: https://stackoverflow.com/questions/65115627/safe-ways-to-specify-postgres-parameters-for-healthchecks-in-docker-compose
-      test: [ "CMD-SHELL", "pg_isready", "-d", "${POSTGRES_DB}" ]
+      # @see: https://stackoverflow.com/questions/42567475/docker-compose-check-if-mysql-connection-is-ready
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
       retries: 5
-    # @see: https://github.com/docker-library/docs/blob/master/postgres/README.md#caveats
-    shm_size: 128mb
 
 volumes:
   caddy-data:
@@ -95,8 +87,7 @@ volumes:
     # @see: https://hub.docker.com/_/caddy
     external: true
   caddy-config:
-  postgres-17-data:
-
+  mysql-data:
 
 networks:
   web:
