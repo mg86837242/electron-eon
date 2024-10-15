@@ -114,6 +114,7 @@ public class SecurityConfig {
 
         // The following link can be found by running `copilot svc show -n client`
         configuration.setAllowedOrigins(List.of(
+                "http://localhost",
                 "http://electr-publi-azlhzncu2erh-1647396286.us-east-1.elb.amazonaws.com"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("*"));

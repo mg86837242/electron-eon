@@ -1,21 +1,8 @@
 services:
-  nginx-proxy-manager:
-    image: jc21/nginx-proxy-manager:latest
-    networks:
-      - web
-    ports:
-      - 80:80
-      - 81:81
-      - 443:443
-    volumes:
-      # Prefer volumes over bind mounts
-      - npm-data:/data
-      - npm-letsencrypt:/etc/letsencrypt
-    restart: unless-stopped
-    
   client:
     build:
-      context: ./electron-eon-client
+      context: ./client
+      dockerfile: Dockerfile.dev
       args:
         # Pass environment variables during the build stage because Vite
         # requires them to be injected during the build process.
@@ -32,17 +19,19 @@ services:
         VITE_BASE_URL: ${VITE_BASE_URL}
     networks:
       - web
-    # ports:
-      # Uncomment the 5174 port, if it's in the development stage, where
-      # `serve` package is used
-      # - 5174:5174
-    environment:
-      NODE_ENV: production
-    restart: on-failure
+    cap_add:
+      # @see: https://hub.docker.com/_/caddy
+      - NET_ADMIN
+    ports:
+      - 80:80
+    volumes:
+      - caddy-data:/data
+      - caddy-config:/config
+    restart: unless-stopped
 
   api-server:
     build:
-      context: ./electron-eon-api-server
+      context: ./api-server
     depends_on:
       mysql:
         condition: service_healthy
@@ -60,9 +49,10 @@ services:
       # the image.
       # @see: https://dassiorleando.medium.com/docker-compose-springboot-mysql-41266290eef8
       SERVER_PORT: ${SERVER_PORT}
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_DATASOURCE_URL: ${MYSQL_URL}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+    restart: unless-stopped
 
   mysql:
     image: mysql:8.0
@@ -71,8 +61,8 @@ services:
     ports:
       # (1) The `ports` mapping makes container port 3306 accessible
       # on host port 3307 and also to other containers within the
-      # same network. The `expose` attribute is redundant here as it
-      # only makes ports accessible to other containers and not to
+      # same network. The `expose` attribute would be redundant here as
+      # it'd only makes ports accessible to other containers and not to
       # the host machine. (2) Publish container port 3306 to host port
       # 3307 to avoid conflict with existing MySQL Workbench local
       # connection on port 3306.
@@ -92,10 +82,13 @@ services:
       retries: 5
 
 volumes:
-  npm-data:
-  npm-letsencrypt:
+  caddy-data:
+    # $ docker volume create caddy-data
+    # @see: https://hub.docker.com/_/caddy
+    external: true
+  caddy-config:
   mysql-data:
-  
+
 networks:
   web:
     driver: bridge
