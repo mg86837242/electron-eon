@@ -2,16 +2,18 @@
 
 ## 1.0 Project Description
 
-"Electron Eon" is an e-commerce web application designed to facilitate the sales process of electronic goods. The primary objective of this website is to provide a one-stop destination for purchasing a wide range of electronic products, including smartphones, laptops, home appliances, and more. The project is created as part of the personal porfolio to demonstrate web development and deploymen skills.
+The project created as a part of the personal portfolio to demonstrate the skill of web development and deployment technologies.
+
+This project is created with minimum e-commerce functionalities to demonstrate a full stack web built with PostgreSQL database, Spring Boot API server backend, and React SPA frontend. Deployment technologies demonstrated include Docker, AWS, Terraform, web server configuration and DNS configuration.
 
 ## 2.0 Usage
 
-The following instructions assume you are not following the `README.md` in the monorepo's root directory, which suggest using Docker Compose to run this full stack web app.
+Note that the instructions below would require more manual work and are more prone to error than using Docker Compose, as outlined in the `README.md` in the project root directory, to run this full stack web app.
 
 ### 2.1 Prerequisite
 
-1. MySQL Community Server and Workbench installed
-2. JDK Development Kit 21+
+1. PostgreSQL client installed (on Windows, you may also need to [set up several environment variables](https://www.youtube.com/watch?v=0EBkVzIBnoc))
+2. Java Development Kit 21+ such as [Eclipse Temurin™ 21.0.4+7-LTS](https://adoptium.net/temurin/releases/?package=jdk&os=any)
 3. IDE for Java such as IntelliJ Community Edition
 4. IDE for JavaScript such as VS Code
 
@@ -19,57 +21,58 @@ The following instructions assume you are not following the `README.md` in the m
 
 1. Clone the repo and resolve Maven dependencies as needed:
 
-```bash
-git clone https://github.com/mg86837242/electron-eon.git
-```
+   ```bash
+   git clone https://github.com/mg86837242/electron-eon.git
+   ```
 
 2. Navigate to the `api-server` directory, then create `application.properties` based on `application.properties.example:
 
-```bash
-cd api-server
-cp src/main/resources/application.properties.example src/main/resources/application.properties
-```
+   ```bash
+   cd api-server
+   cp src/main/resources/application.properties.example src/main/resources/application.properties
+   ```
 
-Modify the following properties to match your MySQL Workbench local connection:
+   Modify the following properties to match your [PostgreSQL credentials to connect to you local database](https://www.postgresql.org/docs/current/app-psql.html):
 
-```
-# application.properties
-spring.datasource.username=********
-spring.datasource.password=********
-```
+   ```
+   # application.properties
+   spring.datasource.username=********
+   spring.datasource.password=********
+   ```
 
-3. Follow the instructions of `src/main/resources/certs/README.md` to create keys for JWT authentication.
+3. Follow the instructions of `src/main/resources/certs/README.md` to create and set up keys for JWT authentication.
 
-4. Start the Spring Boot application `src/main/java/dev/sy/ElectronEonApplication.java` by using a Java IDE.
+4. Start the Spring Boot application `src/main/java/dev/sy/ElectronEonApplication.java` by using an IDE (e.g., IntelliJ Community Edition).
 
-5. Navigate to the `client` directory, then install dependencies:
+5. Navigate to the `client` directory, open up another terminal or another IDE (e.g., VS Code), then install dependencies:
 
-```bash
-cd electron-eon-client
-npm install
-```
+   ```bash
+   cd client
+   npm install
+   ```
 
 6. Start the front-end server and follow the Vite prompts in the terminal to view the app in the browser
 
-```bash
-npm run dev
-```
+   ```bash
+   npm run dev
+   ```
 
 ## 3.0 Overview of Technology Stack
 
-- DBMS: MySQL
-  - Reason: MySQL is both free and user-friendly. In addition, the developer
-    is familiar with this database management system. Due to the project's
-    tight deadline, both ease of use and familiarity hold significant value.
-- Server: Spring Framework including Spring Data, MySQL Connector/J, Spring
-  Security with JWT, etc.
+- Database Management System: PostgreSQL
+  - Reason: PostgreSQL is both free and easy to set up (especially in Linux
+    system). In addition, the developer is familiar with this database
+    management system. Due to the project's tight deadline, both ease of use and
+    familiarity hold significant value.
+- Server: Spring Framework including Spring Data, Spring Web, Spring Security
+  with JWT, etc.
   - Programming language: Java
   - Reason: Using Java makes it easy to adhere to SOLID and OO design
     principles, which are among the technical requirements of this project.
     Additionally, the developer is familiar with Java for backend
     development.
-- Client: SPA by using React and its sub-libraries, vite for front end dev server
-  and bundler, MUI for component library, etc.
+- Client: SPA by using React and its sub-libraries, Vite for front end
+  development server and bundler, MUI for component library, etc.
   - Programming language: JavaScript, JSX
   - Reason: Setting up an SPA is easy. Furthermore, the developer is familiar
     with this type of web architecture. Given the tight deadline for this
