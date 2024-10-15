@@ -75,6 +75,10 @@ services:
       # @see: https://hub.docker.com/_/postgres
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # see: https://stackoverflow.com/questions/60193781/postgres-with-docker-compose-gives-fatal-role-root-does-not-exist-error
+      # For error message in the container: `FATAL: role "root" does not
+      # exist`: https://docs.docker.com/reference/compose-file/services/#user
+      PGUSER: postgres
     restart: unless-stopped
     healthcheck:
       # @see: https://stackoverflow.com/questions/65115627/safe-ways-to-specify-postgres-parameters-for-healthchecks-in-docker-compose
