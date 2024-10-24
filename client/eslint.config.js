@@ -44,6 +44,7 @@ export default [
   },
   {
     // props are ordered by: https://eslint.org/docs/latest/use/configure/configuration-files#configuration-objects
+    // file extensions coverage: https://github.com/jsx-eslint/eslint-plugin-react?tab=readme-ov-file#flat-configs
     files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
     languageOptions: {
       ecmaVersion: 2022,
