@@ -6,15 +6,14 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.3.4</version>
-    <relativePath/>
-    <!-- lookup parent from repository -->
+    <version>3.3.5</version>
+    <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>dev.by</groupId>
   <artifactId>api-server</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>electron-eon-api-server</name>
-  <description>An e-commerce web app project for school, featuring PostgreSQL
+  <description>An e-commerce web app project for school, featuring Postgres
     and Java Spring Boot backend, and JavaScript React frontend.
   </description>
   <properties>
@@ -53,7 +52,7 @@
       <artifactId>spring-security-test</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- the following 2 are for JWT auth -->
+    <!-- The following 2 are for JWT auth -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
@@ -62,6 +61,13 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-configuration-processor</artifactId>
       <optional>true</optional>
+    </dependency>
+    <!-- Patch fix for vulnerability associated with `spring-boot-starter-test`: https://osv .dev/vulnerability/GHSA-chfm-68vv-pvw5 -->
+    <dependency>
+      <groupId>org.xmlunit</groupId>
+      <artifactId>xmlunit-core</artifactId>
+      <version>2.10.0</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <build>
