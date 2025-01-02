@@ -23,7 +23,7 @@ image:
     context: client
     args:
       # @see: https://aws.github.io/copilot-cli/docs/developing/environment-variables/#what-are-the-default-environment-variables
-      VITE_APP_NAME: ${COPILOT_APPLICATION_NAME}
+      VITE_APP_NAME: electroneon
       VITE_BASE_URL: /api/v1
   # Port exposed through your container to route traffic to it.
   port: 80

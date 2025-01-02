@@ -12,8 +12,8 @@ services:
         # "environment variables that already exist when Vite is
         # executed have the highest priority and will not be overwritten
         # by `.env` files.", and `.env.production` will not be used here
-        # since it needs to be placed in the client subdirectory, which
-        # conflicts with centralized environment variable management
+        # since it would need to be placed in the `client` subdirectory,
+        # which conflicts with centralized environment variable management
         # @see: https://stackoverflow.com/questions/77486735/docker-with-vite-env-variables-are-undefined-inside-the-docker-container
         VITE_APP_NAME: ${VITE_APP_NAME}
         VITE_BASE_URL: ${VITE_BASE_URL}

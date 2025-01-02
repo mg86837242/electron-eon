@@ -112,10 +112,14 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // The following link can be found by running `copilot svc show -n client`
+        // Refer to the "Advanced DNS" => "Host Records" section for the following origins.
+        // The following ALB link can be found by running `copilot svc show -n client`, and
+        // The same link is also required in the advanced DNS configuration (e.g., namescheap).
         configuration.setAllowedOrigins(List.of(
                 "http://localhost",
-                "http://electr-publi-azlhzncu2erh-1647396286.us-east-1.elb.amazonaws.com"));
+                "https://electroneon.site",
+                "https://www.electroneon.site",
+                "electr-Publi-3poMZmkjG4HM-710719948.us-east-1.elb.amazonaws.com"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("*"));
         configuration.setAllowedMethods(List.of(
