@@ -9,6 +9,7 @@ This project is created with minimum e-commerce functionalities to demonstrate a
 ## 2.0 Usage
 
 1. Install Docker by following Docker's official instructions.
+
 2. Run the following bash command or equivalent:
 
    ```bash
@@ -29,14 +30,42 @@ This project is created with minimum e-commerce functionalities to demonstrate a
 
 ## 3.0 Tech Stack
 
-1. PostgreSQL database
-2. Spring Boot Java framework, with Spring Data, Spring Security, Spring Web, etc.
-3. React Single Page Application (SPA), with Material UI as the component library
-4. Caddy as the web server
-5. JSON Web Token (JWT) for centralized token management
-6. Docker and Docker Compose for local deployment and cloud deployment
-7. Amazon Web Services (AWS) for cloud deployment:
-   - AWS Copilot CLI to automate the provisioning of ECS task definitions, ECS services, ECS cluster, ECR repos, VPC, EFS, Application Load Balancer, etc.
-   - ECS for orchestration
-   - RDS as a separately created supporting resource to function as the managed database in the cloud
-8. Terraform for provioning the RDS instance
+- PostgreSQL database
+- Spring Boot Java framework, with Spring Data, Spring Security, Spring Web, etc.
+- React Single Page Application (SPA), with Material UI as the component library
+- Caddy as the web server
+- JSON Web Token (JWT) for centralized token management
+- Docker and Docker Compose for local deployment and cloud deployment
+- Amazon Web Services (AWS) for cloud deployment:
+  - AWS Copilot CLI to automate the provisioning of ECS task definitions, ECS services, ECS cluster, ECR repos, VPC, EFS, Application Load Balancer, etc.
+  - ECS for orchestration
+  - RDS as a separately created supporting resource to function as the managed database in the cloud
+- Terraform for provioning the RDS instance
+
+## 4.0 Copilot Deployment Steps
+
+If tt the app and/or environment were not set up before:
+
+- Make sure that AWS Copilot CLI is installed
+- Log in the AWS with `aws sso login` or alternatives
+- Run `copilot init` at the root directory of this monorepo
+  - Give it an app name, e.g., `electroneon`
+  - (Optional) define an environment, and if it is a new environment, make sure to configure `http.public.certificates` section
+  - Choose any one of the services defined in the `./copilot` directory: (1) `api-server` (after entering `api-server`, Copilot will automatically figure out that there is a service already defined in the `./copilot` directory) as "Backend Service" and (2) `client` as "Load Balanced Web Services"
+  - If there is any error related to ECR (Elastic Container Registry), use `aws ecr get-login-password --region <regions_name> | docker login --username AWS --password-stdin <aws_account_id>.dkr.ecr.<regions_name>.amazonaws.com` to authenticate with ECR. Note that this step also requires the installation of AWS CLI and Docker. For more detailed instructions, see [Getting Started with Amazon ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/getting-started-cli.html).
+
+If the app was already set up, but the services were deleted to save costs:
+
+- Run `copilot svc deploy -n client`
+- Run `copilot svc deploy -n api-server`
+
+To delete the services in order to save costs:
+
+- Run `copilot svc delete -n api-server -e prod`
+- Run `copilot svc delete -n client -e prod`
+
+## 5.0 Copilot Deploy Process
+
+## 5.0 Roadmap
+
+- To be added
