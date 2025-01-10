@@ -44,7 +44,7 @@ This project is created with minimum e-commerce functionalities to demonstrate a
 
 ## 4.0 Copilot Deployment Steps
 
-If tt the app and/or environment were not set up before:
+If the app and/or environment were not set up before:
 
 - Make sure that AWS Copilot CLI is installed
 - Log in the AWS with `aws sso login` or alternatives
@@ -53,16 +53,19 @@ If tt the app and/or environment were not set up before:
   - (Optional) define an environment, and if it is a new environment, make sure to configure `http.public.certificates` section
   - Choose any one of the services defined in the `./copilot` directory: (1) `api-server` (after entering `api-server`, Copilot will automatically figure out that there is a service already defined in the `./copilot` directory) as "Backend Service" and (2) `client` as "Load Balanced Web Services"
   - If there is any error related to ECR (Elastic Container Registry), use `aws ecr get-login-password --region <regions_name> | docker login --username AWS --password-stdin <aws_account_id>.dkr.ecr.<regions_name>.amazonaws.com` to authenticate with ECR. Note that this step also requires the installation of AWS CLI and Docker. For more detailed instructions, see [Getting Started with Amazon ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/getting-started-cli.html).
+- Provision the RDS instance, with proper configuration (e.g., username is `postgres`)
 
 If the app was already set up, but the services were deleted to save costs:
 
 - Run `copilot svc deploy -n client`
 - Run `copilot svc deploy -n api-server`
+- Provision the RDS instance, with proper configuration (e.g., username is `postgres`)
 
 To delete the services in order to save costs:
 
 - Run `copilot svc delete -n api-server -e prod`
 - Run `copilot svc delete -n client -e prod`
+- Delete the RDS instance, with proper backup of data or configuration
 
 ## 5.0 Copilot Deploy Process
 
